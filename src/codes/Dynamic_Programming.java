@@ -1,6 +1,10 @@
 package codes;
+import java.util.*;
+
+
 
 public class Dynamic_Programming {
+    public static Scanner sc=new Scanner(System.in);
     public static int fiboOptimized(int n, int[] arr){      // O(n)
         if(n==1 || n==0){
             return n;
@@ -321,9 +325,332 @@ public class Dynamic_Programming {
             return max;
         }
     }
+    public static int lcs2(int[] arr1, int[] arr2){
+        int n=arr1.length;
+        int m=arr2.length;
+        int[][] tab=new int[n+1][m+1];
+        // initializing some columns of tab to zero.
+        for(int x=0; x<n+1; x++){
+            tab[x][0]=0;
+        }
+        for(int x=0; x<m+1; x++){
+            tab[0][x]=0;
+        }
+        // main logic. using lcs technique.
+        for(int i=1; i<n+1; i++){
+            for(int j=1; j<m+1; j++){
+                if(arr1[i-1]==arr2[j-1]){
+                    tab[i][j]=tab[i-1][j-1]+1;
+                }
+                else{
+                    int ans1=tab[i-1][j];
+                    int ans2=tab[i][j-1];
+                    tab[i][j]=Math.max(ans1, ans2);
+                }
+            }
+        }
+        return tab[n][m];
+    }
+    public static int longestIncSubSeq(int[] arr){
+        // To avoid the repeating elements in the array, creating HashSet
+        // thereby storing the element's frequency.
+        // HashSet don't allow the duplicate elements.
+        HashSet<Integer> hs=new HashSet<>();
+        for(int x=0; x<arr.length; x++){
+            hs.add(arr[x]);
+        }
+        // Now creating another array and storing the non-repeating elements form hashSet.
+        int[] arr2=new int[hs.size()];
+        int i=0;
+        for(int ele:hs){
+            arr2[i++]=ele;
+        }
+        java.util.Arrays.sort(arr2);
+        return lcs2(arr, arr2);
+    }
+    // Tabulation.
+    public static int editDistanceWordConversionTabu(String word1, String word2){
+        int n=word1.length();
+        int m=word2.length();
+        if(n==0 && m==0){
+            return 0;
+        }
+        else if(n==0 && m!=0){
+            return m;
+        }
+        else if(n!=0 && m==0){
+            return n;
+        }
+        else{
+            int[][] tabs=new int[n+1][m+1];
+            // initializing the base case array cells.
+            // 1. if the word1 is empty and word2 not empty then no.of operations is equal to m.
+            // 2. if the word2 is empty and word1 not empty then no.of operations is equal to n.
+            // 3. if both word1 and word2 empty then no.of operations is 0.
+            for(int x=0; x<n+1; x++){
+                for(int y=0; y<m+1; y++){
+                    if(x==0){
+                        tabs[x][y]=y;
+                    }
+                    else if(y==0){
+                        tabs[x][y]=x;
+                    }
+                }
+            }
+            // using the tabulation for solving the problem.
+            for(int x=1; x<n+1; x++){
+                for(int y=1; y<m+1; y++){
+                    // if the two the (x-1)th char of word1 is equal to (y-1)th char of word2.
+                    if(word1.charAt(x-1)==word2.charAt(y-1)){
+                        tabs[x][y]=tabs[x-1][y-1];
+                    }
+                    else{
+                        // comparing the strings by comparing on add, delete and replace operations.
+                        /*
+                            1. add - remaining word1 length = x, word2 length = y-1.
+                            2. delete - remaining word1 length = x-1, word2 length = y.
+                            3. replace - remaining word1 length = x-1, word2 length = y-1.
+                         */
+                        // comparing the minimum of the all three operations and adding +1 to the net minimum operations.
+                        tabs[x][y]=Math.min(tabs[x][y-1], Math.min(tabs[x-1][y], tabs[x-1][y-1]))+1;
+                    }
+                }
+            }
+            // returning the total minimum no.of operations required.
+            return tabs[n][m];
+        }
+    }
+    // Normal recursion.
+    public static int editDistanceWordConversion(String word1, String word2){
+        int n=word1.length();
+        int m=word2.length();
+        if(n==0 && m==0){
+            return 0;
+        }
+        else if(n!=0 && m==0){
+            return n;
+        }
+        else if(n==0 && m!=0){
+            return m;
+        }
+        else{
+            // last characters of word1 and word2.
+            char c1=word1.charAt(n-1);
+            char c2=word2.charAt(m-1);
+            // if the last char of word1 and word2 are same, hence no need to perform any operations.
+            if(c1==c2){
+                return editDistanceWordConversion(word1.substring(0, n - 1), word2.substring(0, m - 1));
+            }
+            else{
+                // performing the add operation to word1.
+                // remaining length of the word1 = n and word2 = m-1.
+                int addChar=editDistanceWordConversion(word1.substring(0, n), word2.substring(0, m-1));
+                // performing delete operation.
+                // remaining length of the word1 = n-1 and word2 = m.
+                int deleteChar=editDistanceWordConversion(word1.substring(0, n-1), word2.substring(0, m));
+                // performing replace operation.
+                // remaining length of the word1 = n-1 and word2 = m-1.
+                int replaceChar=editDistanceWordConversion(word1.substring(0, n-1), word2.substring(0, m-1));
+                // finally, comparing the minimum operations required of adding, deleting and replacing.
+                return Math.min(addChar, Math.min(deleteChar, replaceChar))+1;
+            }
+        }
+    }
+    // normal recursion.
+    public static int stringConversion(String word1, String word2){
+        // referring the  logic of the edit distance question.
+        int n=word1.length();
+        int m=word2.length();
+        if(n==0 && m==0){
+            return 0;
+        }
+        else if(n!=0 && m==0){
+            return n;
+        }
+        else if(n==0 && m!=0){
+            return m;
+        }
+        else{
+            // getting the last characters of the word1 and word2.
+            char c1=word1.charAt(n-1);
+            char c2=word2.charAt(m-1);
+            //  case 1: if c1 and c2 are same then no need to perform any operation.
+            if(c1==c2){
+                return stringConversion(word1.substring(0, n-1), word2.substring(0, m-1));
+            }
+            else {
+                // case 2: delete.
+                int delete=stringConversion(word1.substring(0, n-1), word2.substring(0, m));
+                int insert=stringConversion(word1.substring(0, n), word2.substring(0, m-1));
+                return Math.min(delete, insert)+1;
+            }
 
-
-
+        }
+    }
+    // tabulation.
+    public static boolean wildcardMatchingTabu(String s, String p){   // O(n*m).
+        int n=s.length();
+        int m=p.length();
+        boolean[][] tabs=new boolean[n+1][m+1];
+        // initialization of tabulation matrix 'tabs'.
+            // if the both the strings are empty, then it's true.
+        tabs[0][0]=true;
+        // if the pattern is empty.
+        for(int x=1; x<n+1; x++){
+            tabs[x][0]=false;
+        }
+        // if the string 's' is empty.
+        for(int x=1; x<m+1; x++){
+            if(p.charAt(x-1)=='*'){
+                tabs[0][x]=tabs[0][x-1];
+            }
+        }
+        // for remaining cases.
+        for(int x=1; x<n+1; x++){
+            for(int y=1; y<m+1; y++){
+                // if (ith char==jth char) || (jth char==?).
+                if(s.charAt(x-1)==p.charAt(y-1) || (p.charAt(y-1)=='?')){
+                    tabs[x][y]=tabs[x-1][y-1];
+                }
+                else if(p.charAt(y-1)=='*'){
+                    tabs[x][y]=tabs[x-1][y] || tabs[x][y-1];
+                }
+                else{
+                    tabs[x][y]=false;
+                }
+            }
+        }
+        // returning the final answer.
+        return tabs[n][m];
+    }
+    public static int catalanNum(int n){   // simple recursion.
+        if(n==0 || n==1){
+            return 1;
+        }
+        else{
+            int ans=0;
+            for(int x=0; x<n; x++){
+                ans+=catalanNum(x)*catalanNum(n-x-1);
+            }
+            return ans;
+        }
+    }
+    public static int catalanNumMemo(int n, int[] memo){    // Memoization. O(n*n)
+        if(n==0 || n==1){
+            return 1;
+        }
+        else{
+            if(memo[n]!=-1){
+                return memo[n];
+            }
+            else{
+                int ans=0;
+                for(int x=0; x<n; x++){
+                    ans+=catalanNumMemo(x, memo)*catalanNumMemo(n-1-x, memo);
+                }
+                return memo[n]=ans;
+            }
+        }
+    }
+    public static int catalanNumTabu(int n){    // tabulation.  O(n*n)
+        if(n==0 || n==1){
+            return 1;
+        }
+        else{
+            int[] tabs=new int[n+1];
+            tabs[0]=1;
+            tabs[1]=1;
+            for(int x=2; x<n+1; x++){
+                for(int y=0; y<x; y++){
+                    tabs[x]+=tabs[y]*tabs[x-1-y];
+                }
+            }
+            return tabs[n];
+        }
+    }
+    public static int uniquePathsMemo(int m, int n, int[][] tabs){
+        if(m==1 && n==1){
+            return tabs[m][n]=1;
+        }
+        if(tabs[m][n]!=-1){
+            return tabs[m][n];
+        }
+        if(m==1 && n!=1){
+            return tabs[m][n]=uniquePathsMemo(m, n-1, tabs);
+        }
+        if(m!=1 && n==1){
+            return tabs[m][n]=uniquePathsMemo(m-1, n, tabs);
+        }
+        else{
+            int right=uniquePathsMemo(m, n-1, tabs);
+            int down=uniquePathsMemo(m-1, n, tabs);
+            return tabs[m][n]=right+down;
+        }
+    }
+    public static int uniquePathsTabu(int m, int n){     // tabulation.
+        int[][] tabs=new int[m][n];
+        for(int x=0; x<m; x++){
+            tabs[x][0]=1;
+        }
+        for(int x=0; x<n; x++){
+            tabs[0][x]=1;
+        }
+        for(int x=1; x<m; x++){
+            for(int y=1; y<n; y++){
+                tabs[x][y]=tabs[x][y-1]+tabs[x-1][y];
+            }
+        }
+        return tabs[m-1][n-1];
+    }
+    public static int countTrees(int n){        // O(n*n)
+        if(n==0 || n==1){
+            return 1;
+        }
+        else{
+            int[] tabs=new int[n+1];
+            tabs[0]=1;
+            tabs[1]=1;
+            for(int x=2; x<n+1; x++){
+                for(int c=0; c<x; c++){
+                    tabs[x]+=tabs[x-1-c]*tabs[c];
+                }
+            }
+            return tabs[n];
+        }
+    }
+    public static int mountainRanges(int n){
+        if(n==0 || n==1){
+            return 1;       // By default for n==0.
+        }
+        else{
+            int ans=0;
+            for(int x=0; x<n; x++){
+                ans+=mountainRanges(x)*mountainRanges(n-x-1);
+            }
+            return ans;
+        }
+    }
+    public static int matChainMulti(int[] arr, int i, int j){
+        if(i==j){
+            return 0;
+        }
+        else{
+            int ans=Integer.MAX_VALUE;
+            for(int k=i; k<j; k++){
+                // cost of multiplying first part of multiplication.
+                int cost1=matChainMulti(arr, i, k);     // Ai....Ak, matrix form will be of dimensions -> arr[i-1] x arr[k].
+                // cost of multiplying second part of multiplication.
+                int cost2=matChainMulti(arr, k+1, j); // Ak+1.....Aj, matrix form will be of dimensions -> arr[k] x arr[j].
+                // cost of multiplying the resultant two matrices from cost1 and cost2.
+                int cost3=arr[i-1]*arr[k]*arr[j];
+                // final cost, cost for all three operations for cost1, cost2, and cost3.
+                int finalCost=cost1+cost2+cost3;
+                // finally updating the minimum cost.
+                ans=Math.min(ans, finalCost);
+            }
+            return ans;
+        }
+    }
 
 
 
@@ -413,8 +740,8 @@ public class Dynamic_Programming {
                 A subsequence of a string is a new string generated form the original string with some characters
                 (can be none) deleted without changing the relative order of the remaining characters.
          */
-//        String str1="abcdge";
-//        String str2="abedg";
+//        String str1="ae";
+//        String str2="abe";
 //        System.out.println(longestSubSeq(str1, str2));
         // using the memoization to find the longest common subsequence.
 //        String str1="abcdge";
@@ -431,7 +758,7 @@ public class Dynamic_Programming {
         // using the tabulation to find the longest common subsequence.
 //        String str1="abcdge";
 //        String str2="abedg";
-//        System.out.println( + longestSubSeqTab(str1, str2));
+//        System.out.println(longestSubSeqTab(str1, str2));
 
 //        Longest common substring.
         // A substring is a contiguous sequence of characters within a string.
@@ -439,6 +766,134 @@ public class Dynamic_Programming {
 //        String s2="ABGCE";
 //        System.out.println(longestCommonSubStr(s1, s2));
 
+//        Longest increasing subsequence.   Variation of the longest common subsequence.
+        // Finding the length of the subsequences consecutively with next number greater than previous.
+        // In short, how many numbers are arranged in increasing order continuously.
+//        int[] arr={50, 3, 10, 7, 40, 80};
+//        System.out.println("The length of the longest increasing subsequence is: " + longestIncSubSeq(arr));
+
+//        Edit distance problem.
+        /*
+                Given two strings word1 and word2, return minimum no.of operations required to convert
+                word1 to word2.
+                You have three operations permitted on a word:
+                1.Insert a character.
+                2.Delete a character.
+                3.Replace a character.
+
+                // this question is quite similar to the lcs question.
+         */
+//        String word1="intention";
+//        String word2="execution";
+//        // tabulation.
+//        System.out.println("The minimum no.of operations required is: " + editDistanceWordConversionTabu(word1, word2));
+//        // normal recursion.
+//        System.out.println("The minimum no.of operation required is: " + editDistanceWordConversion(word1, word2));
+
+        // String conversion.
+        /*
+                Convert string1 to string2 with only delete and insert operation.
+                Print the no.of deletions and insertions.
+         */
+
+//        String word1="pear";
+//        String word2="sea";
+//        System.out.println("The total no.of deletions and insertions are: " + stringConversion(word1, word2));
+
+        // Wildcard Matching.
+        /*
+                Given a text and a wildcard pattern, implement wildcard pattern matching algorithm that finds if
+                wildcard pattern is matched with text. The matching should cover the entire text (not partial text).
+                 The wildcard pattern can include the characters '?' and '*'.
+                    1. '?' - matches any single character.
+                    2. '*' - matches any sequence of characters(including the empty sequence).
+         */
+                // false case.
+//        String str="abc";
+//        String pat="**d";
+//        System.out.println("The wildcard matching is: " + wildcardMatchingTabu(str, pat));
+//                // true case.
+//        String str2="baaabab";
+//        String pat2="*****ba*****ab";
+//        System.out.println("The wildcard matching is: " + wildcardMatchingTabu(str2, pat2));
+
+        /*
+                Catalan's number.
+                C0=1, C1=1,
+                C2 = C0.C1 + C1.C0,
+                C3 = C2.C0 + C1.C1 + C0.C2.
+                ..... and so on.
+                the basic formula is:
+                CN = C(N-1).C0 + C(N-2).C1 +...+ C0.C(N-1);
+         */
+//        System.out.print("Enter the nth term for Catalan Number: ");
+//        int n=sc.nextInt();
+////        System.out.println("The " + n + "th Catalan Number is: " + catalanNum(n));
+//            // using memoization.
+//        int[] memo=new int[n+1];
+//        for(int x=0; x<n+1; x++){
+//            memo[x]=-1;
+//        }
+//        System.out.println("The Catalan's number using memoization is: " + catalanNumMemo(n, memo));
+//            // using the tabulation.
+//        System.out.println("The Catalan's number using the tabulation is: " + catalanNumTabu(n));
+
+
+        /*
+                There is a robot on an m x n grid. The robot is initially located at the top-left
+                corner (i.e., grid[0][0]). The robot tries to move to the bottom-right corner
+                (i.e., grid[m - 1][n - 1]). The robot can only move either down or right at any point in time.
+                Given the two integers m and n, return the number of possible unique paths that the robot
+                 can take to reach the bottom-right corner.
+         */
+//        int m=5;
+//        int n=7;
+//        System.out.println(uniquePathsTabu(m, n));      // Tabulation.
+//        int[][] tabs=new int[m+1][n+1];
+//        for(int x=0; x<m+1; x++){
+//            for(int y=0; y<n+1; y++){
+//                tabs[x][y]=-1;
+//            }
+//        }
+//        System.out.println(uniquePathsMemo(m, n, tabs));    // Memoization.
+
+        /*
+                    Counting the Trees.
+               Find the possible no.of BSTs form from the n values in array.
+               e.g. n=4 (10, 20, 30), 40;
+         */
+            // this question is the variant of the Catalan's number.
+//        System.out.println("The total BSTs can be formed are: " + countTrees(4));
+
+
+        /*
+                    Mountain Ranges.
+                    Mountain -> up stroke, Valley -> down stroke.
+                    At any moment, the no.of down strokes can't be more than the no.of upstrokes.
+                    ex. /\/\/\
+                        here, the mountains are 3 and valleys are 2.
+
+                    This question is similar to Catalan's Number.
+         */
+//        System.out.println("The total no.of mountain ranges is: " + mountainRanges(3));
+
+//              Matrix Chain Multiplication.
+        /*
+                An array is given ex. arr={1, 2, 3, 4, 5};
+                matrix Ai(where i>=1 and i<arr.length-1) is of dimensions arr[i-1] x arr[i] -> rows x columns.
+                In this question we have to find the minimum cost required of all the matrices multiplications
+                from all possible combinations form from the array given.
+                Basically, from the array we find the total matrices and multiply all of them to get
+                the cost of multiplication. We have to find the minimum cost of multiplying all the
+                matrices, so we need to consider that format/order of multiplication.
+                    For array arr={1, 2, 3, 4, 5}, total no.of matrices will be arr.length-1.
+                    i.e., A1, A2,....,A4.
+                    where dimensions of Ai=arr[i-1] x arr[i] -> rows x columns.
+                    Hence, finding the order of matrices to consider it to get the minimum cost of
+                    multiplication.
+         */
+//        int[] arr={1, 2, 3, 4, 3};
+//        System.out.println("The minimum cost required is: " + matChainMulti(arr, 1,arr.length-1));
 
 
 
