@@ -17,7 +17,6 @@ public class Heaps {
             return this.rank-s2.rank;
         }
     }
-
     static class Heap1{
         private static ArrayList<Integer> arr=new ArrayList<>();
         public void add(int data){              // inserting: 3, 4, 1, 5.
