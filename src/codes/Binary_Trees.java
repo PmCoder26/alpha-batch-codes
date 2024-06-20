@@ -499,6 +499,13 @@ public class Binary_Trees {
             }
         }
 
+        public void visitUtil(List<List<Integer>> rooms, List<Integer> keys, boolean[]isVisited){
+            for(int x=0; x<keys.size(); x++){
+                isVisited[keys.get(x)] = true;
+                visitUtil(rooms, rooms.get(keys.get(x)), isVisited);
+            }
+        }
+
         public boolean leafSimilar(Node root1, Node root2) {
             if(root1 == null && root2 == null){
                 return true;
