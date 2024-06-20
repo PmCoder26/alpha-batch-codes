@@ -486,6 +486,53 @@ public class Binary_Trees {
             }
         }
 
+        public void helper(Node root, Stack<Integer> st){
+            if(root == null){
+                return;
+            }
+            if(root != null && root.left == null && root.right == null){
+                st.push(root.data);
+            }
+            else{
+                helper(root.left, st);
+                helper(root.right, st);
+            }
+        }
+
+        public boolean leafSimilar(Node root1, Node root2) {
+            if(root1 == null && root2 == null){
+                return true;
+            }
+            else if(root1 == null || root2 == null){
+                return false;
+            }
+            else{
+                Stack<Integer> st1 = new Stack<Integer>();
+                Stack<Integer> st2 = new Stack<Integer>();
+                helper(root1, st1);
+                helper(root2, st2);
+                while(!st1.isEmpty() && !st2.isEmpty()){
+                    int n1 = -1;
+                    int n2 = -2;
+                    if(!st1.isEmpty()) {
+                        n1 = st1.pop();
+                    }
+                    if(!st2.isEmpty()) {
+                        n2 = st2.pop();
+                    }
+                    if(n1 != n2){
+                        return false;
+                    }
+                }
+                if(st1.isEmpty() && st2.isEmpty()){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+
     }
 
 
@@ -604,6 +651,17 @@ public class Binary_Trees {
 
 //        checking whether the two given trees p and q are identical or not.
 //        System.out.println(BinaryTree.areSameTrees(Binary_Trees.root, Binary_Trees.root));
+
+        // checking whether the leaf nodes of the two trees are similar in the sequence from left to right.
+        Node root1 = new Node(1);
+        Node root2 = new Node(1);
+        root1.left = new Node(2);
+        root2.left = new Node(2);
+        root1.right = new Node(20);
+        root2.right = new Node(20);
+        System.out.println(tree.leafSimilar(root1, root2));
+
+
 
 
 
