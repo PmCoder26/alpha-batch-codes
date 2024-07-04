@@ -409,6 +409,61 @@ public class Binary_Search_Tree {
     }
 
 
+    private ArrayList<Integer> contains(ArrayList<Node> nums, int key){
+        if(nums.isEmpty()){
+            return new ArrayList<Integer>();
+        }
+        else{
+            ArrayList<Integer> al =  new ArrayList<Integer>();
+            for(int x=0; x<nums.size(); x++){
+                if(nums.get(x).data == key){
+                    al.add(x);
+                }
+            }
+            return al;
+        }
+    }
+    private boolean areSimilar(Node root1, Node root2){
+        if(root1 == null && root2 == null){
+            return true;
+        }
+        if((root1 == null || root2 == null) || (root1.data != root2.data)){
+            return false;
+        }
+        else{
+            boolean left = areSimilar((Node) root1.left, (Node) root2.left);
+            boolean right = areSimilar((Node) root1.right, (Node) root2.right);
+            return left && right;
+        }
+    }
+    private void helper(Node root, ArrayList<Node> tempList, ArrayList<Node> list){
+        if(root == null){
+            return;
+        }
+        ArrayList<Integer> idxList = contains(tempList, root.data);
+        if(!idxList.isEmpty()){
+            for(int x=0; x<idxList.size(); x++){
+                if(areSimilar(tempList.get(idxList.get(x)), root)){
+                    list.add(root);
+                }
+            }
+        }
+        idxList = null;
+        tempList.add(root);
+        helper((Node) root.left, tempList, list);
+        helper((Node) root.right, tempList, list);
+    }
+    public List<Node> printAllDuplis(Node root) {
+        if(root == null){
+            return new ArrayList<Node>();
+        }
+        else{
+            ArrayList<Node> list = new ArrayList<>();
+            helper(root, new ArrayList<Node>(), list);
+            return list;
+        }
+    }
+
 
         public static void main(String[] args){
 
