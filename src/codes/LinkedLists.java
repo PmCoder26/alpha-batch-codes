@@ -478,7 +478,7 @@ public class LinkedLists {
     }
 
     // SinglyCircular.
-    private static class SinglyCircularLL{
+    private static class SinglyCircularLL {
 
         private static class Node{
             Node next;
@@ -582,7 +582,7 @@ public class LinkedLists {
     }
 
     // DoublyCircularLL.
-    private static class DoublyCircularLL{
+    private static class DoublyCircularLL {
         private static class Node{
             Node next, prev;
             int data;
