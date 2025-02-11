@@ -1003,7 +1003,7 @@ Fact - A DAG has at least one vertex with in-degree 0 and one vertex ith out-deg
 //        create7(graph);
 //        printAllPaths(graph, 5, 1, new StringBuilder());
 
-//        Dijkshra's Algorithm.
+//        Dijkstra's Algorithm.
 //        The shortest paths orm the source to all vertices (weighted graph).
         /*
                 Main formula: if dist[u]+ weight(u,v)<dist[v].
