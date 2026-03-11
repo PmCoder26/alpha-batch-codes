@@ -111,30 +111,31 @@ public class Strings {
         return count;
     }
 
-    public static boolean areAnagrams(String s1, String s2){
-        if(s1.length()!=s2.length()){
-            return false;
-        }
-        else {
-            String[] strArr=new String[s2.length()];
-            for(int x=0; x< strArr.length; x++){
-                strArr[x]=Character.toString(s2.charAt(x));
+    private static boolean anagrams(String s1, String s2) {
+        if(s1.length() != s2.length()) return false;
+        if(s1.isBlank() || s2.isBlank()) return false;
+
+        HashMap<Character, Integer> freqMap = new HashMap<>();
+
+        // traversing over s1.
+        for(int x = 0; x < s1.length(); x++) {
+            char c = s1.charAt(x);
+            if(!freqMap.containsKey(c)) {
+                freqMap.put(c, 1);
+            } else {
+              freqMap.put(c, freqMap.get(c) + 1);
             }
-            for(int x=0; x<s1.length(); x++){
-                boolean flag=false;             // s1=race, s2-care
-                for(int y=0; y<strArr.length; y++){
-                    if(Character.toString(s1.charAt(x)).equals(strArr[y])){
-                        strArr[y]="";
-                        flag=true;
-                        break;
-                    }
-                }
-                if(flag==false){
-                    return false;
-                }
-            }
-            return true;
         }
+
+        // traversing over s2 to verify the frequency.
+        for(int x = 0; x < s2.length(); x++) {
+            char c = s2.charAt(x);
+            if(!freqMap.containsKey(c)) return false;
+            if(freqMap.get(c) == 0) return false;
+            else freqMap.put(c, freqMap.get(c) - 1);
+        }
+
+        return true;
     }
 
     public static void main(String[] args){
@@ -242,7 +243,7 @@ public class Strings {
 //      Q.4.Determining whether two strings are anagrams of each other or not.
         String s1="race";
         String s2="care";
-        System.out.println(areAnagrams(s1, s2));
+        System.out.println(anagrams(s1, s2));
 
 
 
