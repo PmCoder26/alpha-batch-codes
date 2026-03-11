@@ -1,5 +1,5 @@
 package codes;
-import java.math.BigInteger;
+
 import java.util.*;
 
 public class Binary_Trees {
@@ -212,27 +212,20 @@ public class Binary_Trees {
                 return new nodeInfo(finalHeight, finalDiameter);
             }
         }
-        public static boolean isIdentical(Node root, Node subRoot){
-            if(root==null && subRoot==null){
-                return true;
-            }
-            else if(root==null || subRoot==null || root.data!=subRoot.data){
-                return false;
-            }
-            if(!isIdentical(root.left, subRoot.left)){
-                return false;
-            }
-            if(!isIdentical(root.right, subRoot.right)){
-                return false;
-            }
-            return true;
+
+        private static boolean isIdentical2(Node root, Node subRoot) {
+            if(root == null && subRoot == null) return true;
+
+            if(root == null || subRoot == null || root.data != subRoot.data) return false;
+
+            return isIdentical2(root.left, subRoot.left) && isIdentical2(root.right, subRoot.right);
         }
         public static boolean isSubtree(Node root, Node subRoot){           // returns true is subtree exists.
             if(root==null){
                 return false;
             }
             if(root.data==subRoot.data){
-                if(isIdentical(root, subRoot)){
+                if(isIdentical2(root, subRoot)){
                     return true;
                 }
             }

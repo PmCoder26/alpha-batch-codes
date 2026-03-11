@@ -1,6 +1,7 @@
 package codes;
-import java.util.*;
-import codes.Arrays.*;
+
+import java.util.ArrayList;
+import java.util.Stack;
 
 public class Stacks {
     //       creating the stack using the ArrayList.
@@ -207,11 +208,7 @@ public class Stacks {
                     }
                 }
             }
-            if (st.isEmpty()) {
-                return true;
-            } else {
-                return false;
-            }
+            return st.isEmpty();
         }
     }
     public static boolean checkDuplicateParentheses(String str) {
